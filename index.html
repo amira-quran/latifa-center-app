@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق زيارات مركز لطيفة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #f4f6f9; color: #2c3e50; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2980b9; border-bottom: 2px solid #ecf0f1; padding-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        input[type="text"], input[type="email"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 5px; box-sizing: border-box; font-family: 'Tajawal'; }
+        .student-card { background: #fdfefe; border: 1px solid #d5dbdb; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-right: 5px solid #2980b9; }
+        .skill-item { margin-bottom: 10px; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        .error-input { display: none; margin-top: 10px; }
+        .btn { padding: 12px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-family: 'Tajawal'; font-size: 16px; width: 100%; margin-bottom: 10px; }
+        .btn-primary { background-color: #2980b9; color: white; }
+        .btn-success { background-color: #27ae60; color: white; }
+        .hidden { display: none; }
+        #loading { text-align: center; font-weight: bold; color: #e67e22; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 استمارة الزيارة الشاملة (مركز لطيفة)</h1>
+    <div id="loading">جاري جلب بيانات المعلمات...</div>
+    
+    <!-- بيانات الزيارة -->
+    <div class="form-group">
+        <label>اسم المعلمة:</label>
+        <select id="teacherSelect" onchange="updateEmail()">
+            <option value="">-- اختاري المعلمة --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>البريد الإلكتروني للمعلمة:</label>
+        <input type="email" id="teacherEmail" readonly style="background-color: #ecf0f1;">
+    </div>
+    <div class="form-group">
+        <label>نوع الحلقة:</label>
+        <select id="classType">
+            <option value="تلاوة صحيحة">تلاوة صحيحة</option>
+            <option value="حفظ قرآن">حفظ قرآن</option>
+            <option value="تلاوة وعلم تجويد">تلاوة وعلم تجويد</option>
+            <option value="اقرأ وارتق">اقرأ وارتق</option>
+        </select>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex: 1;">
+            <label>العدد الكلي:</label>
+            <input type="number" id="totalStudents">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>الحضور:</label>
+            <input type="number" id="attendees">
+        </div>
+    </div>
+
+    <!-- حاوية الطالبات -->
+    <div id="studentsContainer"></div>
+
+    <button type="button" class="btn btn-primary" onclick="addStudent()">➕ إضافة طالبة لهذه الحلقة</button>
+    
+    <div class="form-group" style="margin-top: 30px;">
+        <label>التوصيات الختامية للزيارة:</label>
+        <textarea id="recommendations" rows="4"></textarea>
+    </div>
+    
+    <button type="button" class="btn btn-success" id="submitBtn" onclick="submitData()">🚀 إنهاء وإرسال التقرير النهائي</button>
+</div>
+
+<script>
+    // تم دمج الرابط الخاص بك هنا بنجاح
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxud5RGIXs3qHS8LVW9Fro4k6r4cnxDghLC2hktPy6O4UglSR_f-GlokL522z8i4RvM/exec'; 
+    
+    let teachersData = [];
+    let studentCount = 0;
+
+    // جلب بيانات المعلمات من قاعدة البيانات
+    window.onload = function() {
+        fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            teachersData = data;
+            const select = document.getElementById('teacherSelect');
+            data.forEach(t => {
+                let opt = document.createElement('option');
+                opt.value = t.name;
+                opt.textContent = t.name;
+                select.appendChild(opt);
+            });
+            document.getElementById('loading').style.display = 'none';
+            addStudent(); // إضافة أول طالبة تلقائياً
+        })
+        .catch(err => {
+            document.getElementById('loading').textContent = 'حدث خطأ في الاتصال بقاعدة البيانات. تأكدي من نشر الكود كـ (أي شخص - Anyone)';
+        });
+    }
+
+    // تحديث الإيميل تلقائياً
+    function updateEmail() {
+        const selected = document.getElementById('teacherSelect').value;
+        const teacher = teachersData.find(t => t.name === selected);
+        document.getElementById('teacherEmail').value = teacher ? teacher.email : "";
+    }
+
+    // بناء واجهة تقييم الطالبة
+    function addStudent() {
+        studentCount++;
+        const classType = document.getElementById('classType').value;
+        const container = document.getElementById('studentsContainer');
+        
+        let skills = classType === 'اقرأ وارتق' ? 
+            ['الحروف المفخمة', 'الحروف المرققة', 'الإطباق', 'بنية الحرف', 'الأسئلة المعرفية بالمستوى'] : 
+            ['الغنن', 'المدود', 'الحروف المفخمة', 'الحروف المرققة', 'الحروف المطبقة', 'زمن الحرف الساكن', 'حروف التوسط', 'الوقف والابتداء', 'استخدام الشفايف في التفخيم', 'التقليل أو الإمالة في المدود'];
+
+        let html = `<div class="student-card" id="student_${studentCount}">
+            <h3 style="margin-top:0; color:#c0392b;">👤 تقييم الطالبة (${studentCount})</h3>
+            <div class="form-group"><label>اسم الطالبة:</label><input type="text" class="s-name"></div>`;
+
+        if (classType === 'تلاوة صحيحة' || classType === 'اقرأ وارتق') {
+            html += `<div class="form-group"><label>المستوى:</label><select class="s-level"><option>المستوى الأول</option><option>المستوى الثاني</option><option>المستوى الثالث</option><option>المستوى الرابع</option></select></div>`;
+        }
+        if (classType !== 'اقرأ وارتق') {
+            html += `<div style="display:flex; gap:10px;">
+                        <div class="form-group" style="flex:1;"><label>الجزء:</label><input type="text" class="s-juz"></div>
+                        <div class="form-group" style="flex:1;"><label>السورة:</label><input type="text" class="s-sura"></div>
+                     </div>`;
+        }
+
+        html += `<h4>حدد الأخطاء (اختر ليظهر مربع الكلمات):</h4>`;
+        
+        skills.forEach((skill, idx) => {
+            let uniqueId = `err_${studentCount}_${idx}`;
+            html += `<div class="skill-item">
+                <label style="cursor:pointer; display:flex; align-items:center;">
+                    <input type="checkbox" style="width:20px; height:20px; margin-left:10px;" 
+                           onchange="document.getElementById('${uniqueId}').style.display = this.checked ? 'block' : 'none';">
+                    ${skill}
+                </label>
+                <input type="text" id="${uniqueId}" class="error-input s-error-val" data-skill="${skill}" placeholder="اكتب الكلمات التي أخطأت فيها هنا...">
+            </div>`;
+        });
+        
+        html += `<div class="form-group" style="margin-top:15px;"><label>التقييم النهائي:</label><select class="s-rating"><option>ممتاز</option><option>جيد جداً</option><option>جيد</option><option>ضعيف</option></select></div></div>`;
+        
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    // إرسال البيانات للخادم
+    function submitData() {
+        const btn = document.getElementById('submitBtn');
+        btn.textContent = "جاري تحضير وإرسال التقرير... ⏳";
+        btn.disabled = true;
+
+        let payload = {
+            teacherName: document.getElementById('teacherSelect').value,
+            teacherEmail: document.getElementById('teacherEmail').value,
+            classType: document.getElementById('classType').value,
+            total: document.getElementById('totalStudents').value,
+            attendees: document.getElementById('attendees').value,
+            recommendations: document.getElementById('recommendations').value,
+            students: []
+        };
+
+        document.querySelectorAll('.student-card').forEach(card => {
+            let student = {
+                name: card.querySelector('.s-name').value,
+                level: card.querySelector('.s-level') ? card.querySelector('.s-level').value : "",
+                juz: card.querySelector('.s-juz') ? card.querySelector('.s-juz').value : "",
+                sura: card.querySelector('.s-sura') ? card.querySelector('.s-sura').value : "",
+                finalRating: card.querySelector('.s-rating').value,
+                errors: {}
+            };
+            
+            card.querySelectorAll('.s-error-val').forEach(input => {
+                if(input.style.display === 'block' && input.value.trim() !== "") {
+                    student.errors[input.getAttribute('data-skill')] = input.value;
+                }
+            });
+            payload.students.push(student);
+        });
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert('تم إرسال التقرير بنجاح! راجعي بريدك الإلكتروني.');
+            location.reload(); 
+        })
+        .catch(err => {
+            alert('تم الإرسال، تفقدي الإيميل.');
+            location.reload();
+        });
+    }
+</script>
+</body>
+</html>
