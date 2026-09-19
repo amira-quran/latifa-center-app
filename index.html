@@ -39,6 +39,13 @@
         <label>البريد الإلكتروني للمعلمة:</label>
         <input type="email" id="teacherEmail" readonly style="background-color: #ecf0f1;">
     </div>
+    
+    <!-- الخانة الجديدة للإيميل الإضافي -->
+    <div class="form-group">
+        <label>بريد إلكتروني إضافي (اختياري - اتركيه فارغاً إذا لم يلزم):</label>
+        <input type="email" id="extraEmail" placeholder="مثال: admin@example.com">
+    </div>
+
     <div class="form-group">
         <label>نوع الحلقة:</label>
         <select id="classType">
@@ -73,13 +80,12 @@
 </div>
 
 <script>
-    // تم دمج الرابط الخاص بك هنا بنجاح
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxud5RGIXs3qHS8LVW9Fro4k6r4cnxDghLC2hktPy6O4UglSR_f-GlokL522z8i4RvM/exec'; 
+    // ⚠️ ضعي الرابط الخاص بك بين علامتي التنصيص هنا
+    const SCRIPT_URL = 'رابط_التطبيق_هنا'; 
     
     let teachersData = [];
     let studentCount = 0;
 
-    // جلب بيانات المعلمات من قاعدة البيانات
     window.onload = function() {
         fetch(SCRIPT_URL)
         .then(response => response.json())
@@ -93,21 +99,19 @@
                 select.appendChild(opt);
             });
             document.getElementById('loading').style.display = 'none';
-            addStudent(); // إضافة أول طالبة تلقائياً
+            addStudent(); 
         })
         .catch(err => {
             document.getElementById('loading').textContent = 'حدث خطأ في الاتصال بقاعدة البيانات. تأكدي من نشر الكود كـ (أي شخص - Anyone)';
         });
     }
 
-    // تحديث الإيميل تلقائياً
     function updateEmail() {
         const selected = document.getElementById('teacherSelect').value;
         const teacher = teachersData.find(t => t.name === selected);
         document.getElementById('teacherEmail').value = teacher ? teacher.email : "";
     }
 
-    // بناء واجهة تقييم الطالبة
     function addStudent() {
         studentCount++;
         const classType = document.getElementById('classType').value;
@@ -150,7 +154,6 @@
         container.insertAdjacentHTML('beforeend', html);
     }
 
-    // إرسال البيانات للخادم
     function submitData() {
         const btn = document.getElementById('submitBtn');
         btn.textContent = "جاري تحضير وإرسال التقرير... ⏳";
@@ -159,6 +162,7 @@
         let payload = {
             teacherName: document.getElementById('teacherSelect').value,
             teacherEmail: document.getElementById('teacherEmail').value,
+            extraEmail: document.getElementById('extraEmail').value, // <-- الإيميل الإضافي
             classType: document.getElementById('classType').value,
             total: document.getElementById('totalStudents').value,
             attendees: document.getElementById('attendees').value,
