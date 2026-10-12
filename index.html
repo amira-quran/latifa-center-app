@@ -1,268 +1,432 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق زيارات مركز لطيفة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* المتغيرات والألوان الأساسية (الوضع الفاتح) */
-        :root {
-            --bg-body: #f4f6f9;
-            --bg-container: #ffffff;
-            --text-main: #2c3e50;
-            --border-color: #bdc3c7;
-            --input-bg: #ffffff;
-            --card-bg: #fdfefe;
-            --skill-bg: #f9f9f9;
-            --primary-btn: #2980b9;
-            --primary-hover: #1f618d;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق زيارات مركز لطيفة - التقرير الشامل</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-body:#eef3f6; --bg-container:#ffffff; --text-main:#2c3e50; --text-soft:#6b7c8a;
+  --border-color:#d5dee5; --input-bg:#ffffff; --card-bg:#f8fbfc; --skill-bg:#f3f7f9;
+  --primary:#1f6f8b; --primary-dark:#175a72; --accent:#c9a24a;
+  --danger:#c0392b; --danger-bg:#fdecea; --ok:#2e8b57; --ok-bg:#e7f5ed;
+  --shadow:0 6px 24px rgba(31,111,139,.10);
+}
+body.dark-mode{
+  --bg-body:#10161b; --bg-container:#192229; --text-main:#e6edf1; --text-soft:#9fb0bc;
+  --border-color:#2f3d47; --input-bg:#223039; --card-bg:#1f2b33; --skill-bg:#26343d;
+  --danger-bg:#3a2321; --ok-bg:#1e3328; --shadow:0 6px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg-body);color:var(--text-main);margin:0;padding:18px;transition:.3s;line-height:1.6}
+.container{max-width:860px;margin:0 auto;background:var(--bg-container);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.hero{background:linear-gradient(135deg,#1f6f8b,#2b8aa6 60%,#3a9bb3);color:#fff;text-align:center;padding:22px 16px 18px;position:relative}
+.hero img{width:96px;height:96px;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.85);background:#fff}
+.hero h1{margin:10px 0 2px;font-size:24px}
+.hero p{margin:0;opacity:.9;font-size:14px}
+.theme-btn{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.2);border:none;border-radius:50%;width:42px;height:42px;font-size:20px;cursor:pointer;color:#fff}
+.theme-btn:hover{background:rgba(255,255,255,.35)}
+.content{padding:22px}
+.section{background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;padding:16px;margin-bottom:16px}
+.section-title{margin:0 0 12px;font-size:17px;color:var(--primary);display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:12px}
+label.lbl{display:block;font-weight:700;margin-bottom:6px;font-size:14px}
+input[type=text],input[type=email],input[type=number],input[type=date],input[type=time],select,textarea{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-family:inherit;font-size:15px;
+  background:var(--input-bg);color:var(--text-main);transition:.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(31,111,139,.15)}
+input[readonly]{background:rgba(127,140,141,.15);cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1;min-width:140px}
+#loading{text-align:center;font-weight:700;color:#e67e22;margin-bottom:12px}
+.history-box{background:var(--ok-bg);border:1px solid var(--ok);padding:14px;border-radius:10px;margin-bottom:16px;display:none}
+.history-box small{color:var(--text-soft)}
 
-        /* ألوان الوضع الداكن (Dark Mode) */
-        body.dark-mode {
-            --bg-body: #121212;
-            --bg-container: #1e1e1e;
-            --text-main: #e0e0e0;
-            --border-color: #444;
-            --input-bg: #2c3e50;
-            --card-bg: #273746;
-            --skill-bg: #34495e;
-        }
+.student-card{background:var(--bg-container);border:1px solid var(--border-color);border-right:6px solid var(--primary);border-radius:12px;padding:16px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.student-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.student-head h3{margin:0;color:var(--primary);font-size:18px}
+.remove-btn{background:var(--danger-bg);color:var(--danger);border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-weight:700}
+.sub-title{margin:14px 0 8px;font-size:15px;color:#c27c0e;font-weight:700}
+.skills-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:620px){.skills-wrapper{grid-template-columns:1fr}}
+.skill-item{background:var(--skill-bg);border:1.5px solid transparent;padding:8px 10px;border-radius:8px;transition:.2s}
+.skill-item.has-error{background:var(--danger-bg);border-color:var(--danger)}
+.skill-header{display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;font-size:14px}
+.skill-header input{width:18px;height:18px;accent-color:var(--danger)}
+.error-input{display:none;margin-top:8px;padding:8px 10px !important;font-size:14px !important}
 
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding: 20px; transition: 0.3s; }
-        .container { max-width: 800px; margin: 0 auto; background: var(--bg-container); padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; }
-        
-        /* زر تغيير المظهر */
-        .theme-toggle { text-align: left; margin-bottom: -30px; }
-        .theme-toggle button { background: none; border: none; font-size: 26px; cursor: pointer; transition: 0.2s; }
-        .theme-toggle button:hover { transform: scale(1.1); }
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.btn{padding:12px 18px;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:16px;flex:1;min-width:180px;transition:.2s;color:#fff}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-primary{background:var(--primary)} .btn-print{background:#7d5ba6} .btn-success{background:var(--ok);width:100%}
+.footer-signature{margin-top:20px;text-align:center;font-weight:700;font-size:17px;border-top:2px dashed var(--border-color);padding-top:16px;color:var(--primary)}
 
-        h1 { text-align: center; color: #2980b9; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--text-main); }
-        
-        input[type="text"], input[type="email"], input[type="number"], select, textarea { 
-            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; 
-            box-sizing: border-box; font-family: 'Tajawal'; background-color: var(--input-bg); color: var(--text-main); transition: 0.3s;
-        }
-        
-        /* لون الحقل المغلق (الإيميل) */
-        input[readonly] { background-color: rgba(127, 140, 141, 0.2) !important; }
+/* ========= ورقة الطباعة ========= */
+#printSheet{display:none}
+@media print{
+  @page{size:A4 portrait;margin:10mm}
+  html,body{background:#fff !important;padding:0;margin:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .container{display:none !important}
+  #printSheet{display:block !important;font-family:'Tajawal',sans-serif;color:#22313f;font-size:12.5px;line-height:1.5}
 
-        .student-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-right: 5px solid #2980b9; transition: 0.3s; }
-        .skill-item { margin-bottom: 10px; background: var(--skill-bg); padding: 10px; border-radius: 5px; transition: 0.3s; }
-        .error-input { display: none; margin-top: 10px; }
-        
-        .btn { padding: 12px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-family: 'Tajawal'; font-size: 16px; width: 100%; margin-bottom: 10px; transition: 0.3s; }
-        .btn-primary { background-color: var(--primary-btn); color: white; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-        .btn-success { background-color: #27ae60; color: white; }
-        .btn-success:hover { background-color: #1e8449; }
-        
-        #loading { text-align: center; font-weight: bold; color: #e67e22; margin-bottom: 15px; }
-    </style>
+  .p-header{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#1f6f8b,#3a9bb3);color:#fff;border-radius:10px;padding:8px 14px;margin-bottom:8px}
+  .p-header img{width:58px;height:58px;border-radius:50%;border:2px solid #fff;object-fit:cover;background:#fff}
+  .p-header h1{margin:0;font-size:19px}
+  .p-header span{font-size:12px;opacity:.92}
+
+  .p-info{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+  .p-info div{background:#eef6f9;border:1px solid #c5dde6;border-radius:6px;padding:4px 8px}
+  .p-info b{display:block;color:#1f6f8b;font-size:10.5px;font-weight:700}
+  .p-info div.wide{grid-column:span 2}
+
+  .p-student{border:1.5px solid #9cc3d1;border-radius:10px;margin-bottom:8px;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+  .p-s-head{display:flex;justify-content:space-between;align-items:center;background:#2f5d73;color:#fff;padding:5px 12px}
+  .p-s-head .nm{font-weight:700;font-size:14px}
+  .p-badge{background:#f3d98b;color:#4a3a05;border-radius:12px;padding:1px 12px;font-weight:700;font-size:12px}
+  .p-meta{display:flex;gap:16px;background:#f6fafb;padding:4px 12px;border-bottom:1px solid #d8e6ec;font-size:12px}
+  .p-meta b{color:#1f6f8b}
+  .p-body{padding:6px 10px}
+  .p-block-title{font-weight:700;font-size:12px;margin:0 0 3px}
+  .p-errors{background:#fdf0ee;border-right:4px solid #c85a4b;border-radius:6px;padding:4px 10px;margin-bottom:5px}
+  .p-errors .p-block-title{color:#a8392b}
+  .p-err{padding:1px 0;border-bottom:1px dotted #e7b9b2}
+  .p-err:last-child{border-bottom:none}
+  .p-err em{font-style:normal;color:#8a5a54;font-size:11.5px}
+  .p-ok{background:#eaf6ef;border-right:4px solid #3c9d6b;border-radius:6px;padding:4px 10px}
+  .p-ok .p-block-title{color:#26774f}
+  .p-chips{display:flex;flex-wrap:wrap;gap:3px 6px}
+  .p-chips span{background:#fff;border:1px solid #b9dfc9;border-radius:10px;padding:0 8px;font-size:11.5px}
+  .p-none{color:#7a8a96;font-size:11.5px}
+
+  .p-rec{border:1.5px solid #e1c978;background:#fff9e6;border-radius:10px;padding:6px 12px;margin-top:6px;page-break-inside:avoid}
+  .p-rec .p-block-title{color:#8a6a10;font-size:13px}
+  .p-footer{display:flex;justify-content:space-between;margin-top:8px;padding-top:5px;border-top:2px solid #1f6f8b;font-weight:700;color:#1f6f8b}
+}
+</style>
 </head>
 <body>
 
 <div class="container">
-    <!-- زر الوضع الفاتح والغامق -->
-    <div class="theme-toggle">
-        <button id="themeBtn" onclick="toggleTheme()" title="تغيير المظهر">🌙</button>
-    </div>
+  <div class="hero">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="تغيير المظهر">🌙</button>
+    <img src="https://i.postimg.cc/3wHnSY85/ltyft.jpg" alt="شعار المركز">
+    <h1>📝 استمارة متابعة الحلقات</h1>
+    <p>مركز لطيفة لتعليم القرآن الكريم</p>
+  </div>
 
-    <h1>📝 استمارة الزيارة الشاملة</h1>
+  <div class="content">
     <div id="loading">جاري جلب بيانات المعلمات...</div>
-    
-    <!-- بيانات الزيارة -->
-    <div class="form-group">
-        <label>اسم المعلمة:</label>
-        <select id="teacherSelect" onchange="updateEmail()">
-            <option value="">-- اختاري المعلمة --</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>البريد الإلكتروني للمعلمة:</label>
-        <input type="email" id="teacherEmail" readonly>
-    </div>
-    
-    <div class="form-group">
-        <label>بريد إلكتروني إضافي (اختياري - اتركيه فارغاً إذا لم يلزم):</label>
-        <input type="email" id="extraEmail" placeholder="مثال: admin@example.com">
-    </div>
 
-    <div class="form-group">
-        <label>نوع الحلقة:</label>
-        <select id="classType">
+    <div class="section">
+      <h2 class="section-title">👩‍🏫 بيانات الزيارة</h2>
+      <div class="form-group">
+        <label class="lbl">اسم المعلمة:</label>
+        <select id="teacherSelect" onchange="teacherSelected()"><option value="">-- اختاري المعلمة --</option></select>
+      </div>
+
+      <div class="history-box" id="historyBox">
+        <label class="lbl">الزيارات السابقة (سجل المعلمة):</label>
+        <select id="historySelect" onchange="loadVisitFromHistory()"><option value="">-- زيارة جديدة --</option></select>
+        <small>اختاري زيارة سابقة لتعديلها، أو ابقي على "زيارة جديدة".</small>
+      </div>
+
+      <div class="row">
+        <div class="col form-group"><label class="lbl">رقم الزيارة:</label><input type="number" id="visitNumber" value="1"></div>
+        <div class="col form-group"><label class="lbl">اليوم:</label><input type="text" id="visitDay"></div>
+        <div class="col form-group"><label class="lbl">التاريخ:</label><input type="date" id="visitDate"></div>
+        <div class="col form-group"><label class="lbl">الوقت:</label><input type="time" id="visitTime"></div>
+      </div>
+
+      <div class="form-group" style="display:none;"><input type="email" id="teacherEmail" readonly></div>
+
+      <div class="row">
+        <div class="col form-group" style="flex:2">
+          <label class="lbl">نوع الحلقة (البرنامج):</label>
+          <select id="classType">
             <option value="تلاوة صحيحة">تلاوة صحيحة</option>
             <option value="حفظ قرآن">حفظ قرآن</option>
             <option value="تلاوة وعلم تجويد">تلاوة وعلم تجويد</option>
             <option value="اقرأ وارتق">اقرأ وارتق</option>
-        </select>
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <div class="form-group" style="flex: 1;">
-            <label>العدد الكلي:</label>
-            <input type="number" id="totalStudents">
+          </select>
         </div>
-        <div class="form-group" style="flex: 1;">
-            <label>الحضور:</label>
-            <input type="number" id="attendees">
-        </div>
+        <div class="col form-group"><label class="lbl">العدد الكلي:</label><input type="number" id="totalStudents"></div>
+        <div class="col form-group"><label class="lbl">الحضور:</label><input type="number" id="attendees"></div>
+      </div>
     </div>
 
-    <!-- حاوية الطالبات -->
     <div id="studentsContainer"></div>
 
-    <button type="button" class="btn btn-primary" onclick="addStudent()">➕ إضافة طالبة لهذه الحلقة</button>
-    
-    <div class="form-group" style="margin-top: 30px;">
-        <label>التوصيات الختامية للزيارة:</label>
-        <textarea id="recommendations" rows="4"></textarea>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" onclick="addStudent()">➕ إضافة طالبة</button>
+      <button type="button" class="btn btn-print" onclick="printSheet()">🖨️ طباعة الاستمارة</button>
     </div>
-    
-    <button type="button" class="btn btn-success" id="submitBtn" onclick="submitData()">🚀 إنهاء وإرسال التقرير النهائي</button>
+
+    <div class="section">
+      <h2 class="section-title">💬 التوصيات الختامية للزيارة</h2>
+      <textarea id="recommendations" rows="4"></textarea>
+    </div>
+
+    <button type="button" class="btn btn-success" id="submitBtn" onclick="submitData()">🚀 حفظ وإنهاء التقرير</button>
+
+    <div class="footer-signature">المعلمة الأولى: أميرة محمد السيد</div>
+  </div>
 </div>
 
+<!-- ورقة الطباعة (تُبنى تلقائياً عند الضغط على زر الطباعة) -->
+<div id="printSheet"></div>
+
 <script>
-    // الرابط الجديد الخاص بك يعمل هنا
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0HzirP_VXay7i2segZRVfSUYK7BmDJJA-PNsHIFZvyxrH91Jdg4Oxi6rmcrQb2tq4/exec'; 
-    
-    let teachersData = [];
-    let studentCount = 0;
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0HzirP_VXay7i2segZRVfSUYK7BmDJJA-PNsHIFZvyxrH91Jdg4Oxi6rmcrQb2tq4/exec';
+let teachersData = [], studentCount = 0, currentVisitId = null;
 
-    // دالة تغيير المظهر (فاتح/غامق)
-    function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+const quranData = {
+  juzStarts:[1,22,42,62,82,102,122,142,162,182,202,222,242,262,282,302,322,342,362,382,402,422,442,462,482,502,522,542,562,582],
+  surahStarts:[1,2,50,77,106,128,151,177,187,208,221,235,249,255,262,267,282,293,305,312,322,332,342,350,359,367,377,385,396,404,411,415,418,428,434,440,446,453,458,467,477,483,489,496,499,502,507,511,515,518,520,523,526,528,531,534,537,542,545,549,551,553,554,556,558,560,562,564,566,568,570,572,574,575,577,578,580,582,583,585,586,587,587,589,590,591,591,592,593,593,594,595,595,596,596,597,597,598,598,599,599,600,600,601,601,601,602,602,602,603,603,603,604,604,604],
+  surahNames:["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"]
+};
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function getSkills(classType){
+  return classType === 'اقرأ وارتق'
+    ? ['الحروف المفخمة','الحروف المرققة','الإطباق','بنية الحرف','الأسئلة المعرفية بالمستوى']
+    : ['زمن الغنة','زمن الحروف الساكنة','زمن المد','التوسط [ل ن ع م ر]','حروف الإطباق [ص ض ط ظ]','حروف التفخيم [خ غ ق]','حروف القلقلة','حروف الصفير [س ص ز]','التقليل أو الإمالة','استخدام الشفتين','استخدام الخيشوم','غنة الإدغام','غنة الإخفاء الحقيقي والإقلاب','غنة الإخفاء الشفوي','التكلف في القراءة','ضبط مراتب التلاوة','الوقف والابتداء'];
+}
+
+function updateQuranInfo(inputElem, id){
+  const page = parseInt(inputElem.value);
+  if(!page || page < 1 || page > 604) return;
+  let juz = 1;
+  for(let i = quranData.juzStarts.length-1; i >= 0; i--) if(page >= quranData.juzStarts[i]){ juz = i+1; break; }
+  let surah = '';
+  for(let i = quranData.surahStarts.length-1; i >= 0; i--) if(page >= quranData.surahStarts[i]){ surah = quranData.surahNames[i]; break; }
+  document.getElementById('sura_'+id).value = surah;
+  document.getElementById('juz_'+id).value = juz;
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark-mode');
+  const d = document.body.classList.contains('dark-mode');
+  localStorage.setItem('theme', d ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = d ? '☀️' : '🌙';
+}
+
+function setDefaultDateTime(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('visitDate').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById('visitTime').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  document.getElementById('visitDay').value = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][now.getDay()];
+}
+
+window.onload = function(){
+  if(localStorage.getItem('theme') === 'dark'){
+    document.body.classList.add('dark-mode');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
+  setDefaultDateTime();
+  document.getElementById('classType').addEventListener('change', () => {
+    if(confirm('تغيير نوع الحلقة سيعيد بناء بطاقات الطالبات. هل تريدين المتابعة؟')){
+      document.getElementById('studentsContainer').innerHTML = ''; studentCount = 0; addStudent();
     }
+  });
+  fetch(SCRIPT_URL).then(r => r.json()).then(data => {
+    teachersData = data;
+    const sel = document.getElementById('teacherSelect');
+    data.forEach(t => { const o = document.createElement('option'); o.value = t.name; o.textContent = t.name; sel.appendChild(o); });
+    document.getElementById('loading').style.display = 'none';
+    addStudent();
+  }).catch(() => {
+    document.getElementById('loading').textContent = 'تعذر الاتصال بالخادم، تعمل النسخة محلياً.';
+    addStudent();
+  });
+};
 
-    window.onload = function() {
-        // استرجاع المظهر المفضل للمستخدم
-        if(localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('themeBtn').textContent = '☀️';
-        }
+function teacherSelected(){
+  const selected = document.getElementById('teacherSelect').value;
+  if(!selected){ document.getElementById('historyBox').style.display = 'none'; return; }
+  const teacher = teachersData.find(t => t.name === selected);
+  document.getElementById('teacherEmail').value = teacher ? teacher.email : '';
 
-        // جلب البيانات من جوجل شيت
-        fetch(SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
-            teachersData = data;
-            const select = document.getElementById('teacherSelect');
-            data.forEach(t => {
-                let opt = document.createElement('option');
-                opt.value = t.name;
-                opt.textContent = t.name;
-                select.appendChild(opt);
-            });
-            document.getElementById('loading').style.display = 'none';
-            addStudent(); 
-        })
-        .catch(err => {
-            document.getElementById('loading').textContent = 'حدث خطأ في الاتصال بقاعدة البيانات. تأكدي من نشر الكود كـ (أي شخص - Anyone)';
-        });
+  const teacherVisits = JSON.parse(localStorage.getItem('latifa_visits') || '[]').filter(v => v.teacherName === selected);
+  const hs = document.getElementById('historySelect');
+  hs.innerHTML = '<option value="">-- زيارة جديدة --</option>';
+  if(teacherVisits.length){
+    document.getElementById('historyBox').style.display = 'block';
+    teacherVisits.forEach(v => { const o = document.createElement('option'); o.value = v.id; o.textContent = `الزيارة رقم ${v.visitNumber} - بتاريخ ${v.date}`; hs.appendChild(o); });
+    document.getElementById('visitNumber').value = teacherVisits.length + 1;
+  } else {
+    document.getElementById('historyBox').style.display = 'none';
+    document.getElementById('visitNumber').value = 1;
+  }
+  currentVisitId = null;
+  setDefaultDateTime();
+  document.getElementById('studentsContainer').innerHTML = ''; studentCount = 0; addStudent();
+}
+
+function loadVisitFromHistory(){
+  const id = document.getElementById('historySelect').value;
+  if(!id){ teacherSelected(); return; }
+  const visit = JSON.parse(localStorage.getItem('latifa_visits') || '[]').find(v => v.id == id);
+  if(!visit) return;
+  currentVisitId = visit.id;
+  const set = (k,v) => document.getElementById(k).value = v;
+  set('visitNumber',visit.visitNumber); set('visitDay',visit.day); set('visitDate',visit.date); set('visitTime',visit.time);
+  set('classType',visit.classType); set('totalStudents',visit.total); set('attendees',visit.attendees); set('recommendations',visit.recommendations);
+  document.getElementById('studentsContainer').innerHTML = ''; studentCount = 0;
+  visit.students.forEach(s => addStudent(s));
+}
+
+function addStudent(existing = null){
+  if(existing instanceof Event) existing = null;
+  studentCount++;
+  const id = studentCount;
+  const skills = getSkills(document.getElementById('classType').value);
+  const rating = existing ? existing.finalRating : 'ممتاز';
+
+  let html = `<div class="student-card" id="student_${id}">
+    <div class="student-head"><h3>👤 تقييم الطالبة</h3>
+      <button type="button" class="remove-btn" onclick="this.closest('.student-card').remove()">🗑️ حذف</button></div>
+    <div class="form-group"><label class="lbl">اسم الطالبة:</label><input type="text" class="s-name" value="${esc(existing ? existing.name : '')}"></div>
+    <div class="row">
+      <div class="col form-group"><label class="lbl">الصفحة:</label>
+        <input type="number" class="s-page" min="1" max="604" placeholder="مثال: 414" oninput="updateQuranInfo(this, ${id})" value="${esc(existing && existing.page ? existing.page : '')}"></div>
+      <div class="col form-group" style="flex:1.5"><label class="lbl">السورة:</label>
+        <input type="text" class="s-sura" id="sura_${id}" value="${esc(existing && existing.sura ? existing.sura : '')}"></div>
+      <div class="col form-group"><label class="lbl">الجزء:</label>
+        <input type="text" class="s-juz" id="juz_${id}" value="${esc(existing && existing.juz ? existing.juz : '')}"></div>
+    </div>
+    <div class="sub-title">رصد الأخطاء (حدّدي البنود التي فيها ملاحظة):</div>
+    <div class="skills-wrapper">`;
+
+  skills.forEach((skill, idx) => {
+    const uid = `err_${id}_${idx}`;
+    const hasError = existing && existing.errors && (skill in existing.errors);
+    const errText = hasError ? existing.errors[skill] : '';
+    html += `<div class="skill-item ${hasError ? 'has-error' : ''}">
+      <label class="skill-header">
+        <input type="checkbox" ${hasError ? 'checked' : ''}
+          onchange="document.getElementById('${uid}').style.display=this.checked?'block':'none';this.closest('.skill-item').classList.toggle('has-error',this.checked);">
+        <span>${esc(skill)}</span>
+      </label>
+      <input type="text" id="${uid}" class="error-input s-error-val" data-skill="${esc(skill)}" style="display:${hasError ? 'block' : 'none'}" value="${esc(errText)}" placeholder="الكلمات الملحوظة (اختياري)...">
+    </div>`;
+  });
+
+  html += `</div>
+    <div class="form-group" style="margin-top:14px"><label class="lbl">التقييم النهائي:</label>
+      <select class="s-rating">
+        ${['ممتاز','جيد جداً','جيد','ضعيف'].map(r => `<option ${rating===r?'selected':''}>${r}</option>`).join('')}
+      </select></div></div>`;
+  document.getElementById('studentsContainer').insertAdjacentHTML('beforeend', html);
+}
+
+function collectData(){
+  const v = id => document.getElementById(id).value;
+  const data = {
+    id: currentVisitId || Date.now(),
+    teacherName: v('teacherSelect'), teacherEmail: v('teacherEmail'),
+    visitNumber: v('visitNumber'), day: v('visitDay'), date: v('visitDate'), time: v('visitTime'),
+    classType: v('classType'), total: v('totalStudents'), attendees: v('attendees'),
+    recommendations: v('recommendations'), students: []
+  };
+  document.querySelectorAll('.student-card').forEach(card => {
+    const s = {
+      name: card.querySelector('.s-name').value,
+      page: card.querySelector('.s-page').value,
+      sura: card.querySelector('.s-sura').value,
+      juz: card.querySelector('.s-juz').value,
+      finalRating: card.querySelector('.s-rating').value,
+      errors: {}
+    };
+    card.querySelectorAll('.s-error-val').forEach(inp => {
+      const cb = inp.previousElementSibling.querySelector('input[type="checkbox"]');
+      if(cb.checked) s.errors[inp.getAttribute('data-skill')] = inp.value;
+    });
+    data.students.push(s);
+  });
+  return data;
+}
+
+/* ===== بناء ورقة الطباعة ===== */
+function buildPrintSheet(){
+  const d = collectData();
+  const skills = getSkills(d.classType);
+  const absent = (d.total !== '' && d.attendees !== '') ? (d.total - d.attendees) : '—';
+  const dateAr = d.date ? d.date.split('-').reverse().join('/') : '';
+
+  let h = `<div class="p-header">
+      <img src="https://i.postimg.cc/3wHnSY85/ltyft.jpg" alt="">
+      <div><h1>استمارة متابعة الحلقات</h1><span>مركز لطيفة لتعليم القرآن الكريم</span></div>
+    </div>
+    <div class="p-info">
+      <div class="wide"><b>المعلمة</b>${esc(d.teacherName) || '—'}</div>
+      <div><b>نوع الحلقة</b>${esc(d.classType)}</div>
+      <div><b>رقم الزيارة</b>${esc(d.visitNumber)}</div>
+      <div class="wide"><b>التاريخ</b>${esc(d.day)} ${esc(dateAr)} - ${esc(d.time)}</div>
+      <div><b>العدد الكلي / الحضور</b>${esc(d.total) || '—'} / ${esc(d.attendees) || '—'}</div>
+      <div><b>الغياب</b>${esc(absent)}</div>
+    </div>`;
+
+  d.students.forEach(s => {
+    const errs = skills.filter(k => k in s.errors);
+    const oks = skills.filter(k => !(k in s.errors));
+    const meta = [];
+    if(s.page) meta.push(`<span><b>الصفحة:</b> ${esc(s.page)}</span>`);
+    if(s.sura) meta.push(`<span><b>السورة:</b> ${esc(s.sura)}</span>`);
+    if(s.juz) meta.push(`<span><b>الجزء:</b> ${esc(s.juz)}</span>`);
+
+    h += `<div class="p-student">
+      <div class="p-s-head"><span class="nm">👤 ${esc(s.name) || 'طالبة'}</span><span class="p-badge">${esc(s.finalRating)}</span></div>
+      ${meta.length ? `<div class="p-meta">${meta.join('')}</div>` : ''}
+      <div class="p-body">`;
+    if(errs.length){
+      h += `<div class="p-errors"><div class="p-block-title">❌ الملاحظات المرصودة</div>` +
+        errs.map(k => `<div class="p-err"><strong>${esc(k)}</strong>${s.errors[k] && s.errors[k].trim() ? ` <em>— الكلمات: ${esc(s.errors[k])}</em>` : ''}</div>`).join('') + `</div>`;
+    } else {
+      h += `<div class="p-errors"><div class="p-block-title">❌ الملاحظات المرصودة</div><div class="p-none">لا توجد ملاحظات</div></div>`;
     }
-
-    function updateEmail() {
-        const selected = document.getElementById('teacherSelect').value;
-        const teacher = teachersData.find(t => t.name === selected);
-        document.getElementById('teacherEmail').value = teacher ? teacher.email : "";
+    if(oks.length){
+      h += `<div class="p-ok"><div class="p-block-title">🌟 نقاط القوة (مهارات متقنة)</div><div class="p-chips">` +
+        oks.map(k => `<span>✔ ${esc(k)}</span>`).join('') + `</div></div>`;
     }
+    h += `</div></div>`;
+  });
 
-    function addStudent() {
-        studentCount++;
-        const classType = document.getElementById('classType').value;
-        const container = document.getElementById('studentsContainer');
-        
-        let skills = classType === 'اقرأ وارتق' ? 
-            ['الحروف المفخمة', 'الحروف المرققة', 'الإطباق', 'بنية الحرف', 'الأسئلة المعرفية بالمستوى'] : 
-            ['الغنن', 'المدود', 'الحروف المفخمة', 'الحروف المرققة', 'الحروف المطبقة', 'زمن الحرف الساكن', 'حروف التوسط', 'الوقف والابتداء', 'استخدام الشفايف في التفخيم', 'التقليل أو الإمالة في المدود'];
+  h += `<div class="p-rec"><div class="p-block-title">💬 التوصيات الختامية</div>${esc(d.recommendations || 'لا توجد').replace(/\n/g,'<br>')}</div>
+    <div class="p-footer"><span>المعلمة الأولى: أميرة محمد السيد</span><span>مركز لطيفة</span></div>`;
 
-        let html = `<div class="student-card" id="student_${studentCount}">
-            <h3 style="margin-top:0; color:#c0392b;">👤 تقييم الطالبة (${studentCount})</h3>
-            <div class="form-group"><label>اسم الطالبة:</label><input type="text" class="s-name"></div>`;
+  document.getElementById('printSheet').innerHTML = h;
+}
 
-        if (classType === 'تلاوة صحيحة' || classType === 'اقرأ وارتق') {
-            html += `<div class="form-group"><label>المستوى:</label><select class="s-level"><option>المستوى الأول</option><option>المستوى الثاني</option><option>المستوى الثالث</option><option>المستوى الرابع</option></select></div>`;
-        }
-        if (classType !== 'اقرأ وارتق') {
-            html += `<div style="display:flex; gap:10px;">
-                        <div class="form-group" style="flex:1;"><label>الجزء:</label><input type="text" class="s-juz"></div>
-                        <div class="form-group" style="flex:1;"><label>السورة:</label><input type="text" class="s-sura"></div>
-                     </div>`;
-        }
+function printSheet(){
+  buildPrintSheet();
+  const img = document.querySelector('#printSheet img');
+  const go = () => window.print();
+  if(img && !img.complete){ img.onload = go; img.onerror = go; } else go();
+}
+window.addEventListener('beforeprint', buildPrintSheet);
 
-        html += `<h4 style="color: #e67e22;">حدد الأخطاء (اختر ليظهر مربع الكلمات):</h4>`;
-        
-        skills.forEach((skill, idx) => {
-            let uniqueId = `err_${studentCount}_${idx}`;
-            html += `<div class="skill-item">
-                <label style="cursor:pointer; display:flex; align-items:center;">
-                    <input type="checkbox" style="width:20px; height:20px; margin-left:10px;" 
-                           onchange="document.getElementById('${uniqueId}').style.display = this.checked ? 'block' : 'none';">
-                    ${skill}
-                </label>
-                <input type="text" id="${uniqueId}" class="error-input s-error-val" data-skill="${skill}" placeholder="اكتب الكلمات التي أخطأت فيها هنا...">
-            </div>`;
-        });
-        
-        html += `<div class="form-group" style="margin-top:15px;"><label>التقييم النهائي:</label><select class="s-rating"><option>ممتاز</option><option>جيد جداً</option><option>جيد</option><option>ضعيف</option></select></div></div>`;
-        
-        container.insertAdjacentHTML('beforeend', html);
-    }
+function submitData(){
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'جاري الحفظ... ⏳'; btn.disabled = true;
+  const visitData = collectData();
 
-    function submitData() {
-        const btn = document.getElementById('submitBtn');
-        btn.textContent = "جاري تحضير وإرسال التقرير... ⏳";
-        btn.disabled = true;
+  const all = JSON.parse(localStorage.getItem('latifa_visits') || '[]');
+  if(currentVisitId){
+    const i = all.findIndex(v => v.id == currentVisitId);
+    if(i !== -1) all[i] = visitData;
+  } else all.push(visitData);
+  localStorage.setItem('latifa_visits', JSON.stringify(all));
 
-        let payload = {
-            teacherName: document.getElementById('teacherSelect').value,
-            teacherEmail: document.getElementById('teacherEmail').value,
-            extraEmail: document.getElementById('extraEmail').value,
-            classType: document.getElementById('classType').value,
-            total: document.getElementById('totalStudents').value,
-            attendees: document.getElementById('attendees').value,
-            recommendations: document.getElementById('recommendations').value,
-            students: []
-        };
-
-        document.querySelectorAll('.student-card').forEach(card => {
-            let student = {
-                name: card.querySelector('.s-name').value,
-                level: card.querySelector('.s-level') ? card.querySelector('.s-level').value : "",
-                juz: card.querySelector('.s-juz') ? card.querySelector('.s-juz').value : "",
-                sura: card.querySelector('.s-sura') ? card.querySelector('.s-sura').value : "",
-                finalRating: card.querySelector('.s-rating').value,
-                errors: {}
-            };
-            
-            card.querySelectorAll('.s-error-val').forEach(input => {
-                if(input.style.display === 'block' && input.value.trim() !== "") {
-                    student.errors[input.getAttribute('data-skill')] = input.value;
-                }
-            });
-            payload.students.push(student);
-        });
-
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert('تم إرسال التقرير بنجاح! راجعي بريدك الإلكتروني.');
-            location.reload(); 
-        })
-        .catch(err => {
-            alert('تم الإرسال بنجاح، تفقدي الإيميل.');
-            location.reload();
-        });
-    }
+  fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(visitData), headers:{'Content-Type':'text/plain;charset=utf-8'} })
+    .then(r => r.json())
+    .then(() => { alert('تم حفظ التقرير في السجل وإرساله بنجاح!'); location.reload(); })
+    .catch(() => { alert('تم حفظ التقرير في سجل المتصفح بنجاح! (قد يكون هناك تأخير في الإرسال للبريد).'); location.reload(); });
+}
 </script>
 </body>
 </html>
